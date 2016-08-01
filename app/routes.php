@@ -13,27 +13,43 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return View::make('index');
+	//phpinfo();
 });
+Route::get('/test',function()
+{
+	return phpinfo();
+});
+
+Route::get('/login',function()
+{
+	return View::make('login');
+});
+
+Route::get('/logout',array('before'=>'auth',function()
+{
+	Auth::logout();
+	return Redirect::to('/');
+
+}));
 
 Route::get('backend/login',
     array(
         'as' => 'backend.login',
         'uses' => 'App\Controllers\Backend\PublicController@index'
-    ));
+));
 
 Route::post('backend/login',
     array(
         'as' => 'backend.login',
         'uses' => 'App\Controllers\Backend\PublicController@login'
-    ));
+));
 
 Route::get('backend/logout',
     array(
         'as' => 'backend.logout',
         'uses' =>'App\Controllers\Backend\PublicController@logout'
-    ));
-
+));
 
 
 Route::group(['prefix'=>'backend','before'=>'auth.backend'],function(){
@@ -63,3 +79,35 @@ Route::group(['prefix'=>'backend','before'=>'auth.backend'],function(){
     );
 
 });
+
+
+Route::post('login', array('before' => 'csrf', function()
+{
+    $rules = array(
+        'email'       => 'required|email',
+        'password'    => 'required|min:6',
+        'remember_me' => 'boolean',
+    );
+    $validator = Validator::make(Input::all(), $rules);
+    if ($validator->passes())
+    {
+       if (Auth::attempt(array(
+            'email'    => Input::get('email'),
+            'password' => Input::get('password'),
+            'block'    => 0), (boolean) Input::get('remember_me')))
+       {
+            return Redirect::intended('home');
+       } else {
+            return Redirect::to('login')->withInput()->with('message', 'E-mail or password error');
+       }
+    } else {
+        return Redirect::to('login')->withInput()->withErrors($validator);
+    }
+}));
+
+Route::get('home', array('before' => 'auth', function()
+{
+    return View::make('home');
+}));
+
+

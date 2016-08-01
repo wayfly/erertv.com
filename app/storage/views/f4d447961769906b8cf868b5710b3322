@@ -1,0 +1,43 @@
+<?php $__env->startSection('main'); ?>
+  <div class="am-g am-g-fixed">
+    <div class="am-u-lg-6 am-u-md-8">
+      <br/>
+      <?php if(Session::has('message')): ?>
+        <div class="am-alert am-alert-danger" data-am-alert>
+          <p><?php echo Session::get('message'); ?></p>
+        </div>
+      <?php endif; ?>
+      <?php if($errors->has()): ?>
+        <div class="am-alert am-alert-danger" data-am-alert>
+          <p><?php echo $errors->first(); ?></p>
+        </div>
+      <?php endif; ?>
+      <?php echo Form::open(array('url' => 'login', 'class' => 'am-form')); ?>
+
+        <?php echo Form::label('email', 'E-mail:'); ?>
+
+        <?php echo Form::email('email', Input::old('email')); ?>
+
+        <br/>
+        <?php echo Form::label('password', 'Password:'); ?>
+
+        <?php echo Form::password('password'); ?>
+
+        <br/>
+        <label for="remember_me">
+          <input id="remember_me" name="remember_me" type="checkbox" value="1">
+          Remember Me
+        </label>
+        <br/>
+        <div class="am-cf">
+          <?php echo Form::submit('Login', array('class' => 'am-btn am-btn-primary am-btn-sm am-fl')); ?>
+
+        </div>
+      <?php echo Form::close(); ?>
+
+      <br/>
+    </div>
+  </div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('_layouts.default', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
